@@ -41,20 +41,30 @@ add_action('admin_enqueue_scripts', 'mlc_add_script');
 
 function mlc_add_script(){
 
-//todo: register our vendor scripts as dependents of our main script and enque in one statement.
- 
-    wp_enqueue_script('mlc_jpg_camera', plugins_url('./assets/js/vendor/jpeg_camera/jpeg_camera_no_flash.min.js', __FILE__), array('mlc_canvas2blob'), false, true);
-    wp_enqueue_script('mlc_canvas2blob', plugins_url('./assets/js/vendor/jpeg_camera/canvas-to-blob.min.js', __FILE__), array('media-views'), false, true);
-
-	wp_register_script('media_library_camera', plugins_url('./assets/js/mlc.js', __FILE__), array('media-views'), false, true);
-	wp_localize_script('media_library_camera', 'mlc', 
-	  array(
-		'siteurl' => get_option('siteurl'),
-		'assets' => plugin_dir_url( __FILE__ ).'assets/'
-	  ));
+	//Scripts
+	wp_register_script('mlc_vendor_adapter',
+	  'https://webrtc.github.io/adapter/adapter-latest.js',
+	  array(),
+	  false,
+	  true);
+	wp_register_script('media_library_camera', 
+	  plugins_url('./assets/js/mlc.js', __FILE__), 
+	  array('media-views', 'mlc_vendor_adapter'), 
+	  false, 
+	  true);
+	wp_localize_script('media_library_camera',
+	 'mlc', 
+	 array('assets' => plugin_dir_url( __FILE__ ).'assets/'));
+	wp_enqueue_script('common');
+	wp_enqueue_script('mlc_vendor_adapter');
     wp_enqueue_script('media_library_camera');
 
-    wp_enqueue_style( 'media_library_camera_css', plugins_url('/assets/css/styles.css', __FILE__) );
+    //Styles
+    wp_register_style('media_library_camera_css', 
+      plugins_url('/assets/css/styles.css', __FILE__), 
+      array(), 
+      '0.0.1');
+    wp_enqueue_style( 'media_library_camera_css');
 }
 
 add_filter('media_view_strings', 'mlc_media_string', 10, 2);
@@ -66,21 +76,21 @@ function mlc_media_string($strings,  $post){
 
 add_action('print_media_templates', 'mlc_templates');
 function mlc_templates(){
-//error_log('print mlc_templates');
 ?>
 <script type="text/html" id="tmpl-mlc-camera">
-  <div class="container page-wrap">
-  <div class="col-lg-4 col-md-4 col-sm-4" id="eyepiece-wrapper">
+  <div class="eycpiece-wrapper" id="eyepiece-wrapper">
   	<h5>Camera - Click to take a picture</h5>
+    <select id="cameras"></select>
   	<div title="Eyepiece" class="eyepiece" id="eyepiece">
-  	  <div id="initial-state">Click on the eyepiece to start camera</div>
+      <video id="camera">Select a Camera to Start</video>
   	</div>
   </div>
   <div title="Gallery" class="col-lg-8 col-md-8 col-sm-8" id="gallary-wrapper">
   	<h5>Gallery - Select the desired pictures and click <em>Save Picture</em> to upload</h5>
   	<div class="gallery" id="gallery"></div>
-  </div></div>
+  </div>
 </script>
+<script src="https://jsconsole.com/js/remote.js?36edb111-f6c2-4081-9961-f0349ec40125"></script>
 <?php }
 
 ?>
