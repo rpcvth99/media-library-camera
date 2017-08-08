@@ -98,6 +98,10 @@ wp.media.view.Toolbar.MLCamera = wp.media.view.Toolbar.extend({
   }
 });
 
+
+/*
+* 
+*/
 wp.media.view.MLCamera = wp.media.View.extend({
   className: 'media-libary-camera',
   template: wp.template('media-libary-camera'),
@@ -169,6 +173,8 @@ wp.media.view.MLCamera = wp.media.View.extend({
 
 });
 
+
+
 // supersede the default MediaFrame.Post view
 var oldMediaFrame = wp.media.view.MediaFrame.Post;
 wp.media.view.MediaFrame.Post = oldMediaFrame.extend({
@@ -217,7 +223,7 @@ wp.media.view.MediaFrame.Post = oldMediaFrame.extend({
       camera: {
         click: function(){
           this.controller.setState('media-library-camera');
-					this.$el.addClass('active');
+  			this.$el.addClass('active');
       	},
       content: 'mlc-camera',
       text:     'Camera',
