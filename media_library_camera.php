@@ -49,12 +49,18 @@ function mlc_add_script(){
 	  array('media-views', 'mlc_vendor_adapter'), 
 	  false, 
 	  true);
+	wp_register_script('featured_image_camera', 
+	  plugins_url('./assets/js/fic.js', __FILE__), 
+	  array('media-views', 'mlc_vendor_adapter'), 
+	  false, 
+	  true);
 // 	wp_localize_script('media_library_camera',
 // 	 'mlc', 
 // 	 array('assets' => plugin_dir_url( __FILE__ ).'assets/'));
-	wp_enqueue_script('common');
-	wp_enqueue_script('mlc_vendor_adapter');
+    wp_enqueue_script('common');
+    wp_enqueue_script('mlc_vendor_adapter');
     wp_enqueue_script('media_library_camera');
+    wp_enqueue_script('featured_image_camera');
 
     //Styles
     wp_register_style('media_library_camera_css', 
