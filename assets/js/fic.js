@@ -1,3 +1,19 @@
+wp.media.controller.FICamera = wp.media.controller.MLCamera.extend({
+
+  upload: function(){
+    //console.log('wp.media.controller.FICamera::upload');
+    if ( ! this.workflow ) {
+      this.workflow = wp.media.featuredImage.frame();
+    };
+
+    this.workflow.state().reset();
+    this.addFiles.apply( this );
+    this.workflow.open().setState('featured-image');
+    return false;
+  }
+
+});
+
 oldSelectFrame = wp.media.view.MediaFrame.Select
 wp.media.view.MediaFrame.Select = oldSelectFrame.extend({
 
