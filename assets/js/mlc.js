@@ -1,29 +1,21 @@
 
 wp.media.controller.MLCamera = wp.media.controller.State.extend({
 
-  activate: function(){
-    console.log('wp.media.controller.MLCamera::activate');
-  },
-
-  deactivate: function(){
-    console.log('wp.media.controller.MLCamera::deactivate');
-  },
-
   initialize: function(){
-    console.log('wp.media.controller.MLCamera::initialize');
+    //console.log('wp.media.controller.MLCamera::initialize');
     this.props = new Backbone.Model({ pictures: {}, hasSelections: false });
     this.props.on( 'change:hasSelections', this.refresh, this );
   },
-	
+
   refresh: function() {
-    console.log('wp.media.controller.MLCamera::refresh');
+    //console.log('wp.media.controller.MLCamera::refresh');
     this.frame.toolbar.get().refresh();
   },
 
   upload: function(){
-    console.log('wp.media.controller.MLCamera::upload');
+    //console.log('wp.media.controller.MLCamera::upload');
     if ( ! this.workflow ) {
-      this.workflow = wp.media.editor.open( window.wpActiveEditor, {
+		  this.workflow = wp.media.editor.open( window.wpActiveEditor, {
       frame:    'post',
       state:    'insert',
       title:    wp.media.view.l10n.addMedia,
@@ -37,7 +29,7 @@ wp.media.controller.MLCamera = wp.media.controller.State.extend({
   },
 
   addFiles: function() {
-    console.log('wp.media.controller.MLCamera::addingFiles');
+    //console.log('wp.media.controller.MLCamera::addingFiles');
     var files = this.props.get('pictures');
     for (var i = 0; i <  files.length ; i++) {
       files[i].toBlob(_.bind(function(blob){
@@ -55,7 +47,7 @@ wp.media.controller.MLCamera = wp.media.controller.State.extend({
 
 wp.media.view.Router.MLCamera = wp.media.view.Router.extend({
 	initialize: function() {
-	  console.log('wp.media.view.Router.MLCamera::initalize');
+	  //console.log('wp.media.view.Router.MLCamera::initalize');
 	  wp.media.view.Router.prototype.initialize.apply( this, arguments );	
 	},
 
@@ -63,7 +55,7 @@ wp.media.view.Router.MLCamera = wp.media.view.Router.extend({
 
 wp.media.view.Toolbar.MLCamera = wp.media.view.Toolbar.extend({
 	initialize: function() {
-	  console.log('wp.media.view.Toolbar.MLCamera::initalize');
+	  //console.log('wp.media.view.Toolbar.MLCamera::initalize');
     _.defaults( this.options, {
       event: 'upload',
       close: false,
@@ -112,7 +104,7 @@ wp.media.view.MLCamera = wp.media.View.extend({
   },
 
   render: function(){
-    console.log('wp.media.view.MLCamera::render');
+    //console.log('wp.media.view.MLCamera::render');
     this.$el.html(this.template());
 
     this.ui = {
@@ -163,7 +155,7 @@ wp.media.view.MLCamera = wp.media.View.extend({
   },
 
   toggleSelection : function (e) {
-    console.log('wp.media.view.MLCamera::toggleSelection');
+    //console.log('wp.media.view.MLCamera::toggleSelection');
     var canvasClicked = this.$(e.target);
     canvasClicked.toggleClass('selected');
     var selectedImages = this.$('#gallery canvas.selected').toArray();
@@ -173,25 +165,23 @@ wp.media.view.MLCamera = wp.media.View.extend({
 
 });
 
-
-
 // supersede the default MediaFrame.Post view
 var oldMediaFrame = wp.media.view.MediaFrame.Post;
 wp.media.view.MediaFrame.Post = oldMediaFrame.extend({
 
   initialize: function() {
-    console.log('wp.media.view.MediaFrame.Post::initialize');
+    //console.log('wp.media.view.MediaFrame.Post::initialize');
     oldMediaFrame.prototype.initialize.apply( this, arguments );
-  
+
     this.states.add([
       new wp.media.controller.MLCamera({
         id:            'media-library-camera',
-        menu:       'default', // menu event = menu:render:default
+        menu:       'default',
         router:      'camera',
         content:    'mlc-content',
         title:      		wp.media.view.l10n.mediaLibraryCameraMenuTitle,
         priority:     200,
-        toolbar:     'mlc-toolbar', // toolbar event = toolbar:create:main-my-action
+        toolbar:     'mlc-toolbar',
         type:         'link'
       })
     ]);
@@ -200,17 +190,13 @@ wp.media.view.MediaFrame.Post = oldMediaFrame.extend({
     this.on( 'content:render:mlc-content', this.renderMLCContent, this );
     this.on( 'content:deactivate:mlc-content', this.deactivateMLCContent, this );
 
-    //this.on( 'content:render:camera', this.renderMLCContent, this );
-  
     this.on( 'toolbar:create:mlc-toolbar', this.createMLCToolbar, this );
-    //this.on( 'toolbar:render:mlc-toolbar', this.renderMLCToolbar, this );
-  
-    //this.on( 'router:create:browse', this.createMLCRouter, this );
+
     this.on( 'router:render:browse', this.renderMLCRouter, this );
   },
   
   createRouter: function(router){
-    console.log('wp.media.view.MediaFrame.Post::createRouter');
+    //console.log('wp.media.view.MediaFrame.Post::createRouter');
     router.view = new wp.media.view.Router.MLCamera({
       controller: this,
     });
@@ -218,7 +204,7 @@ wp.media.view.MediaFrame.Post = oldMediaFrame.extend({
   },
   
   renderMLCRouter: function(routerView){
-    console.log('wp.media.view.MediaFrame.Post::renderMLCRouter');
+    //console.log('wp.media.view.MediaFrame.Post::renderMLCRouter');
     routerView.set({
       camera: {
         click: function(){
@@ -235,25 +221,15 @@ wp.media.view.MediaFrame.Post = oldMediaFrame.extend({
   },
   
   createMLCToolbar: function(toolbar){
-    console.log('wp.media.view.MediaFrame.Post::createMCLToolbar');
+    //console.log('wp.media.view.MediaFrame.Post::createMCLToolbar');
     toolbar.view = new wp.media.view.Toolbar.MLCamera({
       controller: this
      });
     return this;
   },
-  
-  renderMLCToolbar: function(toolbarView){
-    console.log('wp.media.view.MediaFrame.Post::renderMLCToolbar');
-  },
-  
-  createMLCContent:function(){
-    console.log('wp.media.view.MediaFrame.Post::createMLCContent');
-  },
-  
+
   renderMLCContent: function(){
-    console.log('wp.media.view.MediaFrame.Post::renderMLCContent');
-    //this.$el.addClass('hide-router');
-    //this.$el.removeClass('hide-router');
+    //console.log('wp.media.view.MediaFrame.Post::renderMLCContent');
     var view = new wp.media.view.MLCamera({
       content:     'mlc-camera',
       controller: this,
@@ -264,7 +240,7 @@ wp.media.view.MediaFrame.Post = oldMediaFrame.extend({
   },
 
   deactivateMLCContent: function(){
-    console.log('wp.media.view.MediaFrame.Post::deactivateMLCContent');
+    //console.log('wp.media.view.MediaFrame.Post::deactivateMLCContent');
     if (wp.media.frame.state().id === 'media-library-camera') {
   		wp.media.frame.setState(this._lastState);
 		}

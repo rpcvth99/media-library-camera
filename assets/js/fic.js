@@ -2,9 +2,9 @@ oldSelectFrame = wp.media.view.MediaFrame.Select
 wp.media.view.MediaFrame.Select = oldSelectFrame.extend({
 
   initialize: function() {
-  console.log('wp.media.view.MediaFrame.Select::initialize');
-  oldSelectFrame.prototype.initialize.apply( this, arguments );
-  
+    //console.log('wp.media.view.MediaFrame.Select::initialize');
+    oldSelectFrame.prototype.initialize.apply( this, arguments );
+
     this.states.add([
       new wp.media.controller.MLCamera({
       id:            'media-library-camera',
@@ -24,7 +24,7 @@ wp.media.view.MediaFrame.Select = oldSelectFrame.extend({
   },
 
   createRouter: function(router){
-    console.log('wp.media.view.MediaFrame.Select::createRouter');
+    //console.log('wp.media.view.MediaFrame.Select::createRouter');
     router.view = new wp.media.view.Router.MLCamera({
       controller: this,
     });
@@ -32,8 +32,8 @@ wp.media.view.MediaFrame.Select = oldSelectFrame.extend({
   },
   
   renderMLCRouter: function(routerView){
-    console.log('wp.media.view.MediaFrame.Select::renderMLCRouter');
     routerView.set({
+    //console.log('wp.media.view.MediaFrame.Select::renderFICRouter');
       camera: {
         click: function(){
           this.controller.setState('media-library-camera');
@@ -49,7 +49,7 @@ wp.media.view.MediaFrame.Select = oldSelectFrame.extend({
   },
   
   createMLCToolbar: function(toolbar){
-    console.log('wp.media.view.MediaFrame.Select::createMCLToolbar');
+    //console.log('wp.media.view.MediaFrame.Select::createFICToolbar');
     toolbar.view = new wp.media.view.Toolbar.MLCamera({
       controller: this
     });
@@ -57,7 +57,7 @@ wp.media.view.MediaFrame.Select = oldSelectFrame.extend({
   },
 
   renderMLCContent: function(){
-    console.log('wp.media.view.MediaFrame.Select::renderMLCContent');
+    //console.log('wp.media.view.MediaFrame.Select::renderFICContent');
     var view = new wp.media.view.MLCamera({
       content:     'mlc-camera',
       controller: this,
@@ -68,8 +68,8 @@ wp.media.view.MediaFrame.Select = oldSelectFrame.extend({
   },
 
   deactivateMLCContent: function(){
-    console.log('wp.media.view.MediaFrame.Select::deactivateMLCContent');
     if (wp.media.frame.state().id === 'media-library-camera') {
+    //console.log('wp.media.view.MediaFrame.Select::deactivateFICContent');
       wp.media.frame.setState(this._lastState);
     }
   }
