@@ -75,22 +75,15 @@ wp.media.view.Toolbar.MLCamera = wp.media.view.Toolbar.extend({
             this.controller.state().trigger( this.options.event );
           }, this)
         }
-			}
-		});
-
-		wp.media.view.Toolbar.prototype.initialize.apply( this, arguments );
-	},
-
-  // called each time the model changes
-	refresh: function() {
-    console.log('wp.media.view.Toolbar.MLCamera::refesh');
-		
-		//this.get('media_camera_event').model.set( 'disabled', ! media_camera_data );
-
-	  // call the parent refresh
-    wp.media.view.Toolbar.prototype.refresh.apply( this, arguments );
+      }
+    });
+    wp.media.view.Toolbar.prototype.initialize.apply( this, arguments );
   },
 
+	refresh: function() {
+    //console.log('wp.media.view.Toolbar.MLCamera::refesh');
+		var disabled = this.controller.state().props.get('hasSelections') < 1;
+		this.get('uploadSnapshots').model.set('disabled', disabled);
   }
 });
 
@@ -163,7 +156,7 @@ wp.media.view.MLCamera = wp.media.View.extend({
     canvasClicked.toggleClass('selected');
     var selectedImages = this.$('#gallery canvas.selected').toArray();
     this.model.set({'pictures' : selectedImages});
-    this.model.set({hasSelections:(selectedImages.length > 0 ? true : false)});
+    this.model.set({hasSelections:(selectedImages.length)});
   }
 
 });
@@ -212,7 +205,7 @@ wp.media.view.MediaFrame.Post = oldMediaFrame.extend({
       camera: {
         click: function(){
           this.controller.setState('media-library-camera');
-  			this.$el.addClass('active');
+    			this.$el.addClass('active').siblings().removeClass('active');
       	},
       content: 'mlc-camera',
       text:     'Camera',

@@ -53,8 +53,8 @@ wp.media.view.MediaFrame.Select = oldSelectFrame.extend({
 		routerView.set({
       camera: {
         click: function(){
-          this.$el.addClass('active');
           this.controller.setState('featured-image-camera');
+          this.$el.addClass('active').siblings().removeClass('active');
         },
         content: 'fic-camera',
         text:     'Camera',
