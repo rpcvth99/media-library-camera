@@ -51,6 +51,10 @@ wp.media.view.Router.MLCamera = wp.media.view.Router.extend({
 	  wp.media.view.Router.prototype.initialize.apply( this, arguments );	
 	},
 
+  refresh: function() {
+    //console.log('wp.media.view.Toolbar.MLCamera::refesh');
+    wp.media.view.Router.prototype.refresh.apply( this, arguments );
+  }
 }),
 
 wp.media.view.Toolbar.MLCamera = wp.media.view.Toolbar.extend({
