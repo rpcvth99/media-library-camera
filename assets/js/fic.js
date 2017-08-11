@@ -22,21 +22,22 @@ wp.media.view.MediaFrame.Select = oldSelectFrame.extend({
     oldSelectFrame.prototype.initialize.apply( this, arguments );
 
     this.states.add([
-      new wp.media.controller.MLCamera({
-      id:            'media-library-camera',
-      content:    'mlc-content',
-			router:      'camera',
-      title:      		'Featured Image',
-      priority:     200,
-      toolbar:     'mlc-toolbar', 
-      type:         'link'
+      new wp.media.controller.FICamera({
+        id:            'featured-image-camera',
+        frame:      'select',
+        content:    'fic-content',
+        router:      'camera',
+        title:      		'Featured Image',
+        priority:     80,
+        toolbar:     'fic-toolbar', 
+        type:         'link'
       })
     ]);
 
-    this.on( 'router:render:browse', this.renderMLCRouter, this );
-    this.on( 'toolbar:create:mlc-toolbar', this.createMLCToolbar, this );
-		this.on( 'content:render:mlc-content', this.renderMLCContent, this );
-    this.on( 'content:deactivate:mlc-content', this.deactivateMLCContent, this );
+    this.on( 'router:render:browse', this.renderFICRouter, this );
+    this.on( 'toolbar:create:fic-toolbar', this.createFICToolbar, this );
+    this.on( 'content:render:fic-content', this.renderFICContent, this );
+    this.on( 'content:deactivate:fic-content', this.deactivateFICContent, this );
   },
 
   createRouter: function(router){
@@ -46,16 +47,16 @@ wp.media.view.MediaFrame.Select = oldSelectFrame.extend({
     });
     return this;
   },
-  
-  renderMLCRouter: function(routerView){
-    routerView.set({
+
+  renderFICRouter: function(routerView){  
     //console.log('wp.media.view.MediaFrame.Select::renderFICRouter');
+		routerView.set({
       camera: {
         click: function(){
-          this.controller.setState('media-library-camera');
           this.$el.addClass('active');
+          this.controller.setState('featured-image-camera');
         },
-        content: 'mlc-camera',
+        content: 'fic-camera',
         text:     'Camera',
         priority: 30,
       },
@@ -63,8 +64,8 @@ wp.media.view.MediaFrame.Select = oldSelectFrame.extend({
     
     return this;
   },
-  
-  createMLCToolbar: function(toolbar){
+
+  createFICToolbar: function(toolbar){
     //console.log('wp.media.view.MediaFrame.Select::createFICToolbar');
     toolbar.view = new wp.media.view.Toolbar.MLCamera({
       controller: this
@@ -72,20 +73,20 @@ wp.media.view.MediaFrame.Select = oldSelectFrame.extend({
     return this;
   },
 
-  renderMLCContent: function(){
+  renderFICContent: function(){
     //console.log('wp.media.view.MediaFrame.Select::renderFICContent');
     var view = new wp.media.view.MLCamera({
-      content:     'mlc-camera',
+      //content:     'fic-camera',
       controller: this,
-      model: this.states.get('media-library-camera').props
+      model: this.states.get('featured-image-camera').props
     });
     this.content.set( view );
     return this;
   },
 
-  deactivateMLCContent: function(){
-    if (wp.media.frame.state().id === 'media-library-camera') {
+  deactivateFICContent: function(){
     //console.log('wp.media.view.MediaFrame.Select::deactivateFICContent');
+    if (wp.media.frame.state().id === 'featured-image-camera') {
       wp.media.frame.setState(this._lastState);
     }
   }
