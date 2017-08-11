@@ -3,9 +3,20 @@ wp.media.controller.MLCamera = wp.media.controller.State.extend({
 
   initialize: function(){
     //console.log('wp.media.controller.MLCamera::initialize');
-    this.props = new Backbone.Model({ pictures: {}, hasSelections: false });
+		var propsModel = Backbone.Model.extend({
+  		defaults:{
+    		pictures: {}, 
+    		hasSelections: false },
+		});
+    this.props = new propsModel;
     this.props.on( 'change:hasSelections', this.refresh, this );
-		this.on('uploadSnapshots', this.upload, this);
+    this.on('uploadSnapshots', this.upload, this);
+  },
+
+  reset: function(){
+    //console.log('wp.media.controller.MLCamera::reset');
+    this.props.clear().set(this.props.defaults);
+		this.refresh;
   },
 
   refresh: function() {
@@ -16,15 +27,16 @@ wp.media.controller.MLCamera = wp.media.controller.State.extend({
   upload: function(){
     //console.log('wp.media.controller.MLCamera::upload');
     if ( ! this.workflow ) {
-		  this.workflow = wp.media.editor.open( window.wpActiveEditor, {
-      frame:    'post',
-      state:    'insert',
-      title:    wp.media.view.l10n.addMedia,
-      multiple: true});
+      this.workflow = wp.media.editor.open( window.wpActiveEditor, {
+        frame:'post',
+        state:'insert',
+        title:wp.media.view.l10n.addMedia,
+        multiple: true
+			});
     };
-    uploadView = this.workflow.uploader;
-    this.workflow.state().reset();
-    this.addFiles.apply( this );
+
+    this.addFiles.apply(this);
+		this.workflow.state().reset();
     this.workflow.open().setState( 'insert' );
     return false;
   },
@@ -35,22 +47,19 @@ wp.media.controller.MLCamera = wp.media.controller.State.extend({
     for (var i = 0; i <  files.length ; i++) {
       files[i].toBlob(_.bind(function(blob){
         this.workflow.uploader.uploader.uploader.addFile(
-    			blob, 
-    			'MCL_IMG-' + Date.now() + '.jpg'
+    			blob, 'MCL_IMG-' + Date.now() + '.jpg'
       	);
-      },this),
-      'image/jpeg', 
-			0.95);
+      },this), 'image/jpeg', 0.95);
     }
     return this;
   }
 });
 
 wp.media.view.Router.MLCamera = wp.media.view.Router.extend({
-	initialize: function() {
-	  //console.log('wp.media.view.Router.MLCamera::initalize');
-	  wp.media.view.Router.prototype.initialize.apply( this, arguments );	
-	},
+  initialize: function() {
+    //console.log('wp.media.view.Router.MLCamera::initalize');
+    wp.media.view.Router.prototype.initialize.apply( this, arguments );	
+  },
 
   refresh: function() {
     //console.log('wp.media.view.Toolbar.MLCamera::refesh');
@@ -82,8 +91,8 @@ wp.media.view.Toolbar.MLCamera = wp.media.view.Toolbar.extend({
 
 	refresh: function() {
     //console.log('wp.media.view.Toolbar.MLCamera::refesh');
-		var disabled = this.controller.state().props.get('hasSelections') < 1;
-		this.get('uploadSnapshots').model.set('disabled', disabled);
+    var disabled = this.controller.state().props.get('hasSelections') < 1;
+    this.get('uploadSnapshots').model.set('disabled', disabled);
   }
 });
 
@@ -94,9 +103,9 @@ wp.media.view.MLCamera = wp.media.View.extend({
   className: 'media-libary-camera',
   template: wp.template('media-libary-camera'),
   events: {
-	  'click video'            : 'takePicture',
-	  'change #cameras' : 'selectCamera',
-		'click canvas'          : 'toggleSelection'
+    'click video': 'takePicture',
+    'change #cameras': 'selectCamera',
+    'click canvas': 'toggleSelection'
   },
 
   render: function(){
@@ -104,10 +113,10 @@ wp.media.view.MLCamera = wp.media.View.extend({
     this.$el.html(this.template());
 
     this.ui = {
-		  'camera'    : this.$('video'),
-		  'cameras'   : this.$('select'),
-		  'gallery'      : this.$('#gallery')
-		};
+      'camera' : this.$('video'),
+      'cameras': this.$('select'),
+      'gallery': this.$('#gallery')
+    };
 
     this.getDevice({audio: false, video: {width: 600, height: 480}});
 		navigator.mediaDevices.enumerateDevices().then(_.bind(this.gotDevices,this));

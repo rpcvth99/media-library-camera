@@ -6,8 +6,8 @@ wp.media.controller.FICamera = wp.media.controller.MLCamera.extend({
       this.workflow = wp.media.featuredImage.frame();
     };
 
-    this.workflow.state().reset();
     this.addFiles.apply( this );
+    this.workflow.state().reset();
     this.workflow.open().setState('featured-image');
     return false;
   }
