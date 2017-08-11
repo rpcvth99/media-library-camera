@@ -5,6 +5,7 @@ wp.media.controller.MLCamera = wp.media.controller.State.extend({
     //console.log('wp.media.controller.MLCamera::initialize');
     this.props = new Backbone.Model({ pictures: {}, hasSelections: false });
     this.props.on( 'change:hasSelections', this.refresh, this );
+		this.on('uploadSnapshots', this.upload, this);
   },
 
   refresh: function() {
@@ -24,7 +25,7 @@ wp.media.controller.MLCamera = wp.media.controller.State.extend({
     uploadView = this.workflow.uploader;
     this.workflow.state().reset();
     this.addFiles.apply( this );
-    this.workflow.open();
+    this.workflow.open().setState( 'insert' );
     return false;
   },
 
@@ -61,15 +62,18 @@ wp.media.view.Toolbar.MLCamera = wp.media.view.Toolbar.extend({
 	initialize: function() {
 	  //console.log('wp.media.view.Toolbar.MLCamera::initalize');
     _.defaults( this.options, {
-      event: 'upload',
+      event: 'uploadSnapshots',
       close: false,
       items: {
-        upload: {
+        uploadSnapshots: {
           text: wp.media.view.l10n.mediaLibraryCameraButton,
           style: 'primary',
           priority: 80,
-          requires: false,
-          click: this.uploadSnapshot
+          requires: {'selection':true},
+          click : _.bind(function(){
+            //console.log('wp.media.view.Toolbar.MLCamera::click');
+            this.controller.state().trigger( this.options.event );
+          }, this)
         }
 			}
 		});
@@ -87,16 +91,11 @@ wp.media.view.Toolbar.MLCamera = wp.media.view.Toolbar.extend({
     wp.media.view.Toolbar.prototype.refresh.apply( this, arguments );
   },
 
-  // triggered when the button is clicked
-  uploadSnapshot: function(){
-	  this.controller.state().upload(this.controller);
-		this.controller.setState( 'insert' );
   }
 });
 
-
 /*
-* 
+* Camera view
 */
 wp.media.view.MLCamera = wp.media.View.extend({
   className: 'media-libary-camera',
