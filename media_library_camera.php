@@ -13,6 +13,25 @@
  * GitHub Branch: master
  */
 
+add_filter('post_row_actions', 'mlc_post_row_actions', 10, 2);
+
+function mlc_post_row_actions($actions, $post){
+	wp_enqueue_media();
+	$post_id = $post->ID;
+	$thumb_id = get_post_thumbnail_id($post_id);
+	
+	$actions['mlc_link'] = '<a href="' . 
+		esc_url( get_upload_iframe_src( 'image', $post_id ) ) .
+		'&height=618&width=504" class="mlc_set_fi"' . 
+		' id="' . $post_id . '">' .
+		__('Featured Image') . '</a>' .
+		' <input type="hidden"' .
+		' id="_thumbnail_id_'. $post_id .
+		'" name="_thumbnail_id_'. $post_id .
+		'" value="'. $thumb_id .'">';
+	return $actions;
+}
+
 add_filter('wp_handle_upload_prefilter', 'mc_filename_prefilter');
 function mc_filename_prefilter($file){
 
@@ -54,6 +73,11 @@ function mlc_add_script(){
 	  array('media-views', 'mlc_vendor_adapter'), 
 	  false, 
 	  true);
+  wp_register_script('post_list_camera', 
+	  plugins_url('./assets/js/plc.js', __FILE__), 
+	  array('featured_image_camera', 'mlc_vendor_adapter'), 
+	  false, 
+	  true);
 // 	wp_localize_script('media_library_camera',
 // 	 'mlc', 
 // 	 array('assets' => plugin_dir_url( __FILE__ ).'assets/'));
@@ -61,6 +85,7 @@ function mlc_add_script(){
     wp_enqueue_script('mlc_vendor_adapter');
     wp_enqueue_script('media_library_camera');
     wp_enqueue_script('featured_image_camera');
+    wp_enqueue_script('post_list_camera');
 
     //Styles
     wp_register_style('media_library_camera_css', 
