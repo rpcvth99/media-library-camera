@@ -4,7 +4,7 @@
  * Plugin URI: https://github.com/rpcvth99/media-library-camera
  * Description: Use your device's camera or computer webcam to add images to media library
  * Author: Steve Datz
- * Version: 0.3
+ * Version: 0.4
  * Author URI: https://github.com/rpcvth99/
  * Text Domain: media-libary-camera
  * License: GPL-3.0+
@@ -13,26 +13,106 @@
  * GitHub Branch: master
  */
 
+add_action('wp_ajax_mlc_remove_thumbnail', 'mlc_remove_thumbnail');
+add_action('wp_ajax_mlc_set_thumbnail', 'mlc_set_thumbnail');
+add_action('admin_enqueue_scripts', 'mlc_add_src_scripts', 0);
+add_action('admin_enqueue_scripts', 'mlc_add_script');
+add_action('print_media_templates', 'mlc_templates');
+
+add_filter('media_view_strings', 'mlc_media_string', 10, 2);
 add_filter('post_row_actions', 'mlc_post_row_actions', 10, 2);
+add_filter('wp_handle_upload_prefilter', 'mc_filename_prefilter');
+
+//add_filter('manage_product_posts_columns', 'mc_product_posts_columns', 10, 1);
+//add_action('manage_product_posts_custom_column', 'mc_product_posts_custom_column', 10, 2);
+
+function mlc_remove_thumbnail(){
+	$post_id = intval( $_POST['post_id'] );
+	
+	check_ajax_referer( 'mlc_nonce' );
+	
+	if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		wp_die( -1 );
+	}
+
+	$return = delete_post_thumbnail($post_id);
+
+	wp_send_json_success( mlc_get_mlc_action_string($post_id) );
+}
+
+function mlc_set_thumbnail(){
+
+	$post_id = intval( $_POST['post_id'] );
+
+	check_ajax_referer( 'mlc_nonce' );
+
+	if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		wp_die( -1 );
+	}
+
+	$thumbnail_id = intval( $_POST['thumbnail_id'] );
+
+	// For backward compatibility, -1 refers to no featured image.
+	if ( -1 === $thumbnail_id ) {
+		$thumbnail_id = null;
+	}
+
+	$return = set_post_thumbnail( $post_id, $thumbnail_id );
+
+	wp_send_json_success( mlc_get_mlc_action_string($post_id) );
+
+}
+
+function mlc_get_mlc_action_string($post_id){
+
+	$return = '';
+	$thumb_id = get_post_thumbnail_id($post_id);
+
+	if (get_post_type($post_id) == 'product'){
+		$img_alias = '<a class="mlc-action-text">Product Image</a>';
+	}else {
+		$img_alias = '<a class="mlc-action-text">Featured Image</a>';
+	};
+	$return = $img_alias . ' - '.
+			'<a href="' .
+			esc_url( get_upload_iframe_src( 'image', $post_id ) ) .
+			'&height=618&width=504" class="mlc_set_thumb"' .
+			' id="' . $post_id . '">' . __('Set') . '</a>' .
+			' <input type="hidden"' . ' id="_thumbnail_id_'. $post_id .
+			'" name="_thumbnail_id_'. $post_id . '" value="'. $thumb_id .'">';
+	if($thumb_id<>'') {
+		$return = $return . '&nbsp;-&nbsp;<a href="#"' .
+				' class="mlc_remove_thumb"' .
+				' id="' . $post_id . '">' . __('Remove') . '</a>';
+	}
+
+	return $return;
+
+}
 
 function mlc_post_row_actions($actions, $post){
 	wp_enqueue_media();
 	$post_id = $post->ID;
-	$thumb_id = get_post_thumbnail_id($post_id);
-	
-	$actions['mlc_link'] = '<a href="' . 
-		esc_url( get_upload_iframe_src( 'image', $post_id ) ) .
-		'&height=618&width=504" class="mlc_set_fi"' . 
-		' id="' . $post_id . '">' .
-		__('Featured Image') . '</a>' .
-		' <input type="hidden"' .
-		' id="_thumbnail_id_'. $post_id .
-		'" name="_thumbnail_id_'. $post_id .
-		'" value="'. $thumb_id .'">';
+	$actions['mlc-actions-'.$post_id] = mlc_get_mlc_action_string($post_id);
 	return $actions;
 }
 
-add_filter('wp_handle_upload_prefilter', 'mc_filename_prefilter');
+function mc_product_posts_custom_column($column, $post_id){
+	if ($column == 'mlc_thumb') {
+		echo '<img src="' + the_post_thumbnail_url() + '"' +
+			' alt="Placeholder" width="300" height="300"' +
+			' class="woocommerce-placeholder wp-post-image">';
+	}
+}
+
+function mc_product_posts_columns($columns){
+	$col_name = $columns['thumb'];
+	unset( $columns['thumb'] ) ;
+	$columns['mlc_thumb'] = $col_name + 'xxx';
+
+	return $columns;
+}
+ 
 function mc_filename_prefilter($file){
 
   if($file['name'] == 'blob' and  $file['type'] =='image/jpeg'){
@@ -42,7 +122,6 @@ function mc_filename_prefilter($file){
 
 }
 
-add_action('admin_enqueue_scripts', 'mlc_add_src_scripts', 0);
 function mlc_add_src_scripts(){
 
 	wp_deregister_script( 'plupload' );
@@ -54,7 +133,6 @@ function mlc_add_src_scripts(){
 
 }
 
-add_action('admin_enqueue_scripts', 'mlc_add_script');
 function mlc_add_script(){
 
 	//Scripts
@@ -78,9 +156,9 @@ function mlc_add_script(){
 	  array('featured_image_camera', 'mlc_vendor_adapter'), 
 	  false, 
 	  true);
-// 	wp_localize_script('media_library_camera',
-// 	 'mlc', 
-// 	 array('assets' => plugin_dir_url( __FILE__ ).'assets/'));
+ 	wp_localize_script('post_list_camera',
+ 	 'mlc', 
+ 	 array('nonce' =>  wp_create_nonce( 'mlc_nonce' )));
     wp_enqueue_script('common');
     wp_enqueue_script('mlc_vendor_adapter');
     wp_enqueue_script('media_library_camera');
@@ -95,14 +173,12 @@ function mlc_add_script(){
     wp_enqueue_style( 'media_library_camera_css');
 }
 
-add_filter('media_view_strings', 'mlc_media_string', 10, 2);
 function mlc_media_string($strings,  $post){
     $strings['mediaLibraryCameraMenuTitle'] = __('Insert From Snapshot', 'media_library_camera');
     $strings['mediaLibraryCameraButton'] = __('Add to Library', 'media_library_camera');
     return $strings;
 }
 
-add_action('print_media_templates', 'mlc_templates');
 function mlc_templates(){
 ?>
 <script type="text/html" id="tmpl-media-libary-camera">

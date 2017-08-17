@@ -81,5 +81,10 @@ canvas.selected {
   padding: 5px;
 }
 
+a.mlc-action-text {
+	cursor: default;	
+}
 
-
+a.mlc-action-text:active, a.mlc-action-text:hover {
+	color: initial;	
+}
