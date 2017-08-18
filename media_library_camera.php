@@ -4,7 +4,7 @@
  * Plugin URI: https://github.com/rpcvth99/media-library-camera
  * Description: Use your device's camera or computer webcam to add images to media library
  * Author: Steve Datz
- * Version: 0.4
+ * Version: 0.5
  * Author URI: https://github.com/rpcvth99/
  * Text Domain: media-libary-camera
  * License: GPL-3.0+
