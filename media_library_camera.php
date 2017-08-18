@@ -55,7 +55,7 @@ function mlc_get_thumb_html(){
 
 	$src = get_the_post_thumbnail($post_id, 'thumbnail');
 	if (!$src){$src='No Image';};
-	$src .= '<div class="mlc-img-spinner" id="mlc-img-spinner-'.$post_id.'"></div>';
+	$src = '<div class="mlc-img-spinner" id="mlc-img-spinner-'.$post_id.'"></div>'.$src;
 
 	wp_send_json_success( $src );
 }
@@ -64,13 +64,13 @@ function mlc_get_mlc_action_string($post_id){
 
 	$return = '';
 	$thumb_id = get_post_thumbnail_id($post_id);
+	$img_alias .= '<div class="mlc-action-spinner" id="mlc-action-spinner-'. $post_id .'"></div>';
 
 	if (get_post_type($post_id) == 'product'){
-		$img_alias = '<a class="mlc-action-text">Product Image</a>';
+		$img_alias .= '<a class="mlc-action-text">Product Image</a>';
 	}else {
-		$img_alias = '<a class="mlc-action-text">Featured Image</a>';
+		$img_alias .= '<a class="mlc-action-text">Featured Image</a>';
 	};
-	$img_alias .= '<div class="mlc-action-spinner" id="mlc-action-spinner-'. $post_id .'"></div>';
 	$return = $img_alias . ' - '.'<a href="' .
 		esc_url( get_upload_iframe_src( 'image', $post_id ) ) .
 		'&height=618&width=504" class="mlc_set_thumb"' . ' id="' . 
