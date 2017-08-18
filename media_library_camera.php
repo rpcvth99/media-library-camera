@@ -91,7 +91,7 @@ function mlc_get_mlc_action_string($post_id){
 }
 
 function mlc_post_row_actions($actions, $post){
-	wp_enqueue_media();
+	if (did_action('wp_enqueue_media')==0){wp_enqueue_media();}
 	$post_id = $post->ID;
 	$actions['mlc-actions-'.$post_id] = mlc_get_mlc_action_string($post_id);
 	return $actions;
