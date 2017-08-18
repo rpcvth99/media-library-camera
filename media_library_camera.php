@@ -55,6 +55,7 @@ function mlc_get_thumb_html(){
 
 	$src = get_the_post_thumbnail($post_id, 'thumbnail');
 	if (!$src){$src='No Image';};
+	$src .= '<div class="mlc-img-spinner" id="mlc-img-spinner-'.$post_id.'"></div>';
 
 	wp_send_json_success( $src );
 }
@@ -69,16 +70,17 @@ function mlc_get_mlc_action_string($post_id){
 	}else {
 		$img_alias = '<a class="mlc-action-text">Featured Image</a>';
 	};
+	$img_alias .= '<div class="mlc-action-spinner" id="mlc-action-spinner-'. $post_id .'"></div>';
 	$return = $img_alias . ' - '.'<a href="' .
 		esc_url( get_upload_iframe_src( 'image', $post_id ) ) .
-		'&height=618&width=504" class="mlc_set_thumb"' .
-		' id="' . $post_id . '">' . __('Set') . '</a>' .
+		'&height=618&width=504" class="mlc_set_thumb"' . ' id="' . 
+		$post_id . '">' . __('Set') . '</a>' .
 		' <input type="hidden"' . ' id="_thumbnail_id_'. $post_id .
 		'" name="_thumbnail_id_'. $post_id . '" value="'. $thumb_id .'">';
 	if($thumb_id<>'') {
 		$return = $return . '&nbsp;-&nbsp;<a href="#"' .
-				' class="mlc_remove_thumb"' .
-				' id="' . $post_id . '">' . __('Remove') . '</a>';
+			' class="mlc_remove_thumb"' . ' id="' . $post_id . '">' . 
+			'' . __('Remove') . '</a>';
 	}
 
 	return $return;
@@ -95,7 +97,9 @@ function mlc_post_row_actions($actions, $post){
 function mc_product_posts_custom_column($column, $post_id){
 	if ($column == 'mlc-thumb') {
 		$src = get_the_post_thumbnail($post_id, 'thumbnail');
-		if ($src){echo $src;}else {echo 'No Image';};
+		if (!$src){$src = 'No Image';};
+		$src .= '<div class="mlc-img-spinner" id="mlc-img-spinner-'.$post_id.'"></div>';
+		echo $src;
 	}
 }
 

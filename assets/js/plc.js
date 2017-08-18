@@ -11,6 +11,8 @@ jQuery( document ).ready( function( $ ) {
     wp.media.model.settings.post.nonce = mlc.nonce;
     if (! file_frame ) {
       wp.media.featuredImage.set = function(id){
+  			$('#mlc-action-spinner-'+post_id).show();
+				$('#mlc-img-spinner-'+post_id).show();
         var settings = wp.media.view.settings;
         settings.post.featuredImageId = id;
         wp.media.post( 'mlc_set_thumbnail', {
@@ -31,6 +33,8 @@ jQuery( document ).ready( function( $ ) {
             console.log( 'Error getting Featured Image html' );
             return;};
           $( 'tr#post-'+post_id+' td.mlc-thumb' ).html( img_src );
+					$('#mlc-action-spinner-'+post_id).hide();
+  				$('#mlc-img-spinner-'+post_id).hide();
           });
   	    });
       };
@@ -43,6 +47,9 @@ jQuery( document ).ready( function( $ ) {
   	var post_id, nonce;
     event.preventDefault();
 		post_id = parseInt(this.id);
+		$('#mlc-action-spinner-'+post_id).show();
+		$('#mlc-img-spinner-'+post_id).show();
+ 
   	console.log('remove featured image post-id=' + post_id);
   	wp.media.post( 'mlc_remove_thumbnail', {
       post_id:post_id,
@@ -61,6 +68,8 @@ jQuery( document ).ready( function( $ ) {
           console.log( 'Error getting Featured Image html' );
           return;};
         $( 'tr#post-'+post_id+' td.mlc-thumb' ).html( img_src );
+				$('#mlc-action-spinner-'+post_id).hide();
+				$('#mlc-img-spinner-'+post_id).hide();
       });
   	});
   });
