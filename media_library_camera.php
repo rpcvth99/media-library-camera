@@ -15,6 +15,7 @@
 
 add_action('wp_ajax_mlc_remove_thumbnail', 'mlc_remove_thumbnail');
 add_action('wp_ajax_mlc_set_thumbnail', 'mlc_set_thumbnail');
+add_action('wp_ajax_mlc_get_thumb_html', 'mlc_get_thumb_html');
 add_action('admin_enqueue_scripts', 'mlc_add_src_scripts', 0);
 add_action('admin_enqueue_scripts', 'mlc_add_script');
 add_action('print_media_templates', 'mlc_templates');
@@ -23,44 +24,39 @@ add_filter('media_view_strings', 'mlc_media_string', 10, 2);
 add_filter('post_row_actions', 'mlc_post_row_actions', 20, 2);
 add_filter('wp_handle_upload_prefilter', 'mc_filename_prefilter');
 
-//add_filter('manage_product_posts_columns', 'mc_product_posts_columns', 10, 1);
-//add_action('manage_product_posts_custom_column', 'mc_product_posts_custom_column', 10, 2);
+add_filter('manage_edit-product_columns', 'mc_product_posts_columns', 10, 1);
+add_action('manage_product_posts_custom_column', 'mc_product_posts_custom_column', 10, 2);
 
 function mlc_remove_thumbnail(){
-	$post_id = intval( $_POST['post_id'] );
-	
+	$post_id = intval( $_POST['post_id'] );	
 	check_ajax_referer( 'mlc_nonce' );
-	
-	if ( ! current_user_can( 'edit_post', $post_id ) ) {
-		wp_die( -1 );
-	}
+	if ( ! current_user_can( 'edit_post', $post_id ) ) {wp_die( -1 );}
 
 	$return = delete_post_thumbnail($post_id);
-
 	wp_send_json_success( mlc_get_mlc_action_string($post_id) );
 }
 
 function mlc_set_thumbnail(){
-
 	$post_id = intval( $_POST['post_id'] );
-
 	check_ajax_referer( 'mlc_nonce' );
-
-	if ( ! current_user_can( 'edit_post', $post_id ) ) {
-		wp_die( -1 );
-	}
+	if ( ! current_user_can( 'edit_post', $post_id ) ) {wp_die( -1 );}
 
 	$thumbnail_id = intval( $_POST['thumbnail_id'] );
-
-	// For backward compatibility, -1 refers to no featured image.
-	if ( -1 === $thumbnail_id ) {
-		$thumbnail_id = null;
-	}
+	if ( -1 === $thumbnail_id ) {$thumbnail_id = null;}
 
 	$return = set_post_thumbnail( $post_id, $thumbnail_id );
-
 	wp_send_json_success( mlc_get_mlc_action_string($post_id) );
 
+}
+
+function mlc_get_thumb_html(){
+	$post_id = intval( $_POST['post_id'] );
+	check_ajax_referer( 'mlc_nonce' );
+
+	$src = get_the_post_thumbnail($post_id, 'thumbnail');
+	if (!$src){$src='No Image';};
+
+	wp_send_json_success( $src );
 }
 
 function mlc_get_mlc_action_string($post_id){
@@ -97,18 +93,20 @@ function mlc_post_row_actions($actions, $post){
 }
 
 function mc_product_posts_custom_column($column, $post_id){
-	if ($column == 'mlc_thumb') {
-		echo '<img src="' + the_post_thumbnail_url() + '"' +
-			' alt="Placeholder" width="300" height="300"' +
-			' class="woocommerce-placeholder wp-post-image">';
+	if ($column == 'mlc-thumb') {
+		$src = get_the_post_thumbnail($post_id, 'thumbnail');
+		if ($src){echo $src;}else {echo 'No Image';};
 	}
 }
 
 function mc_product_posts_columns($columns){
-	$col_name = $columns['thumb'];
-	unset( $columns['thumb'] ) ;
-	$columns['mlc_thumb'] = $col_name + 'xxx';
 
+	if (key_exists('thumb', $columns)){
+		$col_name = $columns['thumb'];
+		unset( $columns['thumb'] ) ;
+		$first_col = array_slice($columns, 0, 1 );
+		$columns = $first_col + array('mlc-thumb'=>$col_name) + $columns;
+	}
 	return $columns;
 }
  
