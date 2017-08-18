@@ -22,8 +22,6 @@ jQuery( document ).ready( function( $ ) {
               window.alert( 'Error Saving Featured Image' );
               return;
             }
-            console.log('Featured Image Set');
-						$( '.inside', '.mlc-actions-' + post_id ).html( html + " | ");
         });
 			};
     	file_frame = wp.media.featuredImage.frame();
@@ -45,7 +43,7 @@ jQuery( document ).ready( function( $ ) {
           return;
         }
         console.log('Featured Image Removed');
-				$( '.inside', '.mlc-actions-' + post_id ).html( html );
     });
 	});
+        $( 'tr#post-'+post_id+' td.mlc-thumb' ).html( img_src );
 });
