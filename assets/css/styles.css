@@ -24,11 +24,16 @@ footer, .page-wrap:after {
 .eyepiece {
   background-color: #eee;
   display: inline-block;
+	width: 320px;
   height: 240px;
   margin: 0.5em;
-  width: 320px;
   border: medium;
   border-color: black;
+}
+
+canvas {
+  height: 240px;
+	width: 320px;
 }
 
 .camera-message {

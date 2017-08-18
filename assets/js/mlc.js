@@ -118,7 +118,14 @@ wp.media.view.MLCamera = wp.media.View.extend({
       'gallery': this.$('#gallery')
     };
 
-    this.getDevice({audio: false, video: {width: 600, height: 480}});
+    this.getDevice({
+  		audio: false, 
+  		video: {
+    		width: {min:300, ideal:800, max:1200}, 
+    		height: {min: 225, ideal:600 , max:600},
+				aspectRatio: { ideal: 1.33336 }
+			}
+		});
 		navigator.mediaDevices.enumerateDevices().then(_.bind(this.gotDevices,this));
 		return this;
   },
@@ -141,6 +148,8 @@ wp.media.view.MLCamera = wp.media.View.extend({
   takePicture: function() {
     //console.log('wp.media.view.MLCamera::takePicture');
     var canvas = document.createElement("canvas");
+		canvas.height = this.ui.camera[0].videoHeight;
+		canvas.width = this.ui.camera[0].videoWidth;
     var context = canvas.getContext("2d");
     context.drawImage(this.ui.camera[0], 0, 0, canvas.width, canvas.height);
     this.ui.gallery.append(canvas);
