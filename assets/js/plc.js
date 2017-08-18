@@ -19,13 +19,13 @@ jQuery( document ).ready( function( $ ) {
           _wpnonce:     settings.post.nonce
           }).done( function( html ) {
             if ( html == '0' ) {
-              window.alert( 'Error Saving Featured Image' );
-              return;
             }
         });
 			};
     	file_frame = wp.media.featuredImage.frame();
 		}
+            console.log( 'Error Saving Featured Image' );
+            return;};
     file_frame.open();
 	});
 
@@ -39,9 +39,6 @@ jQuery( document ).ready( function( $ ) {
       _wpnonce:mlc.nonce
       }).done( function( html ) {
         if ( html == '0' ) {
-          window.alert( 'Error Removing Featured Image' );
-          return;
-        }
         console.log('Featured Image Removed');
     });
 	});
