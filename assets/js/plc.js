@@ -1,6 +1,6 @@
 jQuery( document ).ready( function( $ ) {
-	var file_frame, post_id, thumb_id, nonce;
-	jQuery('a.mlc_set_thumb').on('click', function( event ){
+  var file_frame, post_id, thumb_id, nonce;
+  jQuery(document).on('click', 'a.mlc_set_thumb', function( event ){
     event.preventDefault();
     post_id = parseInt(this.id);
     thumb_id = $('#_thumbnail_id_' + post_id).val();
@@ -29,8 +29,8 @@ jQuery( document ).ready( function( $ ) {
     file_frame.open();
 	});
 
-	jQuery('a.mlc_remove_thumb').on('click', function( event ){
-		event.preventDefault();
+  jQuery(document).on('click', 'a.mlc_remove_thumb', function( event ){
+    event.preventDefault();
     post_id = parseInt(this.id);
     thumb_id = -1;
 		console.log('remove featured image post-id=' + post_id);
