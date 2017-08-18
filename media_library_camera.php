@@ -20,7 +20,7 @@ add_action('admin_enqueue_scripts', 'mlc_add_script');
 add_action('print_media_templates', 'mlc_templates');
 
 add_filter('media_view_strings', 'mlc_media_string', 10, 2);
-add_filter('post_row_actions', 'mlc_post_row_actions', 10, 2);
+add_filter('post_row_actions', 'mlc_post_row_actions', 20, 2);
 add_filter('wp_handle_upload_prefilter', 'mc_filename_prefilter');
 
 //add_filter('manage_product_posts_columns', 'mc_product_posts_columns', 10, 1);
