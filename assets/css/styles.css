@@ -88,3 +88,23 @@ a.mlc-action-text {
 a.mlc-action-text:active, a.mlc-action-text:hover {
 	color: initial;	
 }
+
+td.column-mlc-thumb img {
+	margin: 0;
+	width: auto;
+	height: auto;
+	max-width: 40px;
+	max-height: 40px;
+	vertical-align: middle;
+}
+
+table.wp-list-table .column-mlc-thumb {
+	width: 52px;
+	text-align: center;
+	white-space: nowrap;
+}
+
+table.wp-list-table .column-name {
+	width: 45%;
+}
+
