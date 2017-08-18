@@ -73,13 +73,12 @@ function mlc_get_mlc_action_string($post_id){
 	}else {
 		$img_alias = '<a class="mlc-action-text">Featured Image</a>';
 	};
-	$return = $img_alias . ' - '.
-			'<a href="' .
-			esc_url( get_upload_iframe_src( 'image', $post_id ) ) .
-			'&height=618&width=504" class="mlc_set_thumb"' .
-			' id="' . $post_id . '">' . __('Set') . '</a>' .
-			' <input type="hidden"' . ' id="_thumbnail_id_'. $post_id .
-			'" name="_thumbnail_id_'. $post_id . '" value="'. $thumb_id .'">';
+	$return = $img_alias . ' - '.'<a href="' .
+		esc_url( get_upload_iframe_src( 'image', $post_id ) ) .
+		'&height=618&width=504" class="mlc_set_thumb"' .
+		' id="' . $post_id . '">' . __('Set') . '</a>' .
+		' <input type="hidden"' . ' id="_thumbnail_id_'. $post_id .
+		'" name="_thumbnail_id_'. $post_id . '" value="'. $thumb_id .'">';
 	if($thumb_id<>'') {
 		$return = $return . '&nbsp;-&nbsp;<a href="#"' .
 				' class="mlc_remove_thumb"' .
